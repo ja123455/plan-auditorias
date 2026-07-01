@@ -1,4 +1,4 @@
-const KEY='auditVisitsV2',CKEY='auditCompaniesV2',LKEY='auditLocationsV1';
+const KEY='auditVisitsV2',CKEY='auditCompaniesV2',LKEY='auditLocationsV1',BOTH_ID='both';
 let visits=[],locationNotes=[],companies=[{id:'c1',name:'Empresa 1',color:'#1d557e'},{id:'c2',name:'Empresa 2',color:'#6a45b8'}];
 let calendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 const $=id=>document.getElementById(id);
@@ -27,7 +27,18 @@ function esc(x){return String(x??'').replaceAll('&','&amp;').replaceAll('<','&lt
 function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
 function normalizeName(s){return String(s||'').trim().toLocaleLowerCase('es-MX').replace(/\s+/g,' ')}
 function newId(){return globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(16).slice(2)}`}
-function company(id){return companies.find(c=>c.id===id)||companies[0]}
+function company(id){
+  if(id===BOTH_ID)return{id:BOTH_ID,name:'Ambas empresas',color:'#586675',shared:true,colors:[companies[0].color,companies[1].color]};
+  return companies.find(c=>c.id===id)||companies[0];
+}
+function companyOptions(){
+  return companies.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')+`<option value="${BOTH_ID}">Ambas empresas (locación compartida)</option>`;
+}
+function companyMarker(c){
+  if(c.shared)return `<span class="dual-dots"><span style="background:${c.colors[0]}"></span><span style="background:${c.colors[1]}"></span></span>`;
+  return `<span class="dot" style="background:${c.color}"></span>`;
+}
+function eventBackground(c){return c.shared?`linear-gradient(90deg,${c.colors[0]}18 0 50%,${c.colors[1]}18 50% 100%)`:`${c.color}18`}
 function formatDate(s,weekday=true){return cap(dateObj(s).toLocaleDateString('es-MX',weekday?{weekday:'long',day:'numeric',month:'long',year:'numeric'}:{day:'numeric',month:'short',year:'numeric'}))}
 function formatTime(t){return t?dateObj('2000-01-01',t).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}):'Sin hora'}
 function computedEndDate(v){
@@ -58,7 +69,7 @@ function alertData(v){
 }
 function statusClass(s){return {'Pendiente':'blue','En proceso':'purple','Completada':'green','Cancelada':'gray'}[s]||'gray'}
 function refreshCompanies(){
-  const options=companies.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  const options=companyOptions();
   $('company').innerHTML=options;
   $('locationCompany').innerHTML=options;
   $('companyFilter').innerHTML='<option value="">Todas las empresas</option>'+options;
@@ -89,8 +100,8 @@ function filtered(){
 }
 function card(v){
   const c=company(v.companyId),[txt,cls]=alertData(v),endDate=computedEndDate(v),endTime=computedEndTime(v);
-  return `<article id="visit-${v.id}" class="visit ${visitActiveOn(v,ymd())?'today-card':''}" style="border-left-color:${c.color}">
-    <div class="visit-top"><div><h3>${esc(v.location)}</h3><div class="company"><span class="dot" style="background:${c.color}"></span>${esc(c.name)}</div></div>
+  return `<article id="visit-${v.id}" class="visit ${c.shared?'shared-company':''} ${visitActiveOn(v,ymd())?'today-card':''}" style="border-left-color:${c.color}">
+    <div class="visit-top"><div><h3>${esc(v.location)}</h3><div class="company">${companyMarker(c)}${esc(c.name)}</div></div>
     <div class="badges"><span class="badge ${statusClass(v.status)}">${esc(v.status)}</span><span class="badge ${cls}">${txt}</span></div></div>
     <div class="meta-grid">
       <div class="meta"><small>Inicio</small><b>${formatDate(v.date,false)} · ${formatTime(v.time)}</b></div>
@@ -121,7 +132,7 @@ function renderCalendar(){
     const shown=events.slice(0,3);
     html+=`<div class="calendar-day ${outside?'outside':''} ${todayDay?'today-day':''}">
       <div class="day-number"><span>${day.getDate()}</span>${todayDay?'<span class="today-label">HOY</span>':''}</div>
-      ${shown.map(v=>{const c=company(v.companyId),startMark=dayString===v.date?'Inicio':dayString===computedEndDate(v)?'Fin':'En curso';return `<button class="cal-event" style="border-left-color:${c.color};background:${c.color}18" data-action="open" data-id="${v.id}"><b>${esc(v.location)}</b><small>${startMark}${dayString===v.date&&v.time?' · '+formatTime(v.time):''}</small></button>`}).join('')}
+      ${shown.map(v=>{const c=company(v.companyId),startMark=dayString===v.date?'Inicio':dayString===computedEndDate(v)?'Fin':'En curso';return `<button class="cal-event ${c.shared?'shared-event':''}" style="border-left-color:${c.color};background:${eventBackground(c)}" data-action="open" data-id="${v.id}"><b>${esc(v.location)}</b><small>${startMark}${dayString===v.date&&v.time?' · '+formatTime(v.time):''}</small></button>`}).join('')}
       ${events.length>3?`<div class="more-events">+${events.length-3} más</div>`:''}
     </div>`;
   }
@@ -147,8 +158,8 @@ function renderLocations(){
   if(!list.length){$('locationList').innerHTML='<div class="location-empty">No hay locaciones para mostrar.</div>';return}
   $('locationList').innerHTML=list.map(l=>{
     const c=company(l.companyId),age=locationAgeInfo(l.lastAuditDate);
-    return `<article class="location-item" style="border-left-color:${c.color}">
-      <div class="location-top"><div><h3 class="location-title">${esc(l.name)}</h3><div class="location-company"><span class="dot" style="background:${c.color}"></span>${esc(c.name)}</div></div><span class="age-chip ${age.cls}">${age.label}</span></div>
+    return `<article class="location-item ${c.shared?'shared-company':''}" style="border-left-color:${c.color}">
+      <div class="location-top"><div><h3 class="location-title">${esc(l.name)}</h3><div class="location-company">${companyMarker(c)}${esc(c.name)}</div></div><span class="age-chip ${age.cls}">${age.label}</span></div>
       <div class="location-date"><span>Última auditoría</span><b>${l.lastAuditDate?formatDate(l.lastAuditDate,false):'Sin fecha'}</b></div>
       ${l.note?`<div class="location-note">${esc(l.note)}</div>`:''}
       <div class="location-actions"><button class="btn good" data-loc-action="schedule" data-id="${l.id}">Programar</button><button class="btn soft" data-loc-action="edit" data-id="${l.id}">Editar</button><button class="btn bad" data-loc-action="remove" data-id="${l.id}">Eliminar</button></div>
