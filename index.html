@@ -4,62 +4,83 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Plan de Auditorías</title>
-<style>
-:root{--bg:#f3f6f8;--card:#fff;--ink:#17212b;--muted:#677381;--line:#dfe5ea;--blue:#1d557e;--blue2:#2d739f;--red:#c93442;--green:#168454;--orange:#d96d0d;--yellow:#8a6a00;--purple:#6a45b8;--shadow:0 10px 28px rgba(25,44,62,.08)}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}header{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;padding:25px 20px;box-shadow:var(--shadow)}.head{max-width:1320px;margin:auto;display:flex;justify-content:space-between;gap:20px;align-items:flex-start;flex-wrap:wrap}h1{margin:0 0 5px;font-size:29px}.sub{margin:0;color:#e2eef6}.today{padding:11px 15px;border-radius:12px;background:#ffffff20;min-width:220px}.today b{font-size:11px;letter-spacing:.1em}.today span{display:block;font-size:17px;font-weight:800;margin-top:4px}main{max-width:1320px;margin:22px auto;padding:0 18px 40px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:17px}.stat,.card{background:var(--card);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}.stat{padding:15px}.stat small{color:var(--muted);font-weight:700}.stat strong{display:block;font-size:27px;margin-top:4px}.layout{display:grid;grid-template-columns:365px 1fr;gap:20px;align-items:start}.pad{padding:18px}.card h2{margin:0 0 15px;font-size:20px}.field{margin-bottom:13px}label{display:block;font-size:12px;font-weight:800;color:var(--muted);margin-bottom:6px}input,select,textarea{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--blue2);box-shadow:0 0 0 3px #2d739f1c}textarea{min-height:82px;resize:vertical}.cols{display:grid;grid-template-columns:1fr 1fr;gap:9px}.btns{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:10px;padding:10px 13px;font-weight:850;cursor:pointer}.primary{background:var(--blue);color:#fff}.soft{background:#edf2f6;color:var(--ink)}.good{background:#e9f7ef;color:var(--green);border:1px solid #c9ead7}.bad{background:#fff0f1;color:var(--red);border:1px solid #ffd2d7}.btns .btn{flex:1}.settings{border-top:1px solid var(--line);margin-top:17px;padding-top:15px}.settings h3{font-size:13px;margin:0 0 9px}.company-row{display:grid;grid-template-columns:1fr 46px;gap:7px;margin-bottom:7px}input[type=color]{padding:3px;height:41px}.tools{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr auto;gap:9px;margin-bottom:14px}.timeline{position:relative;padding-left:33px;min-height:130px}.timeline:before{content:"";position:absolute;left:13px;top:5px;bottom:5px;width:3px;background:#d5dde4;border-radius:10px}.group{margin-bottom:24px}.date{position:relative;margin:0 0 11px;font-size:15px;color:var(--blue)}.date:before{content:"";position:absolute;left:-26px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--blue);border:3px solid #fff;box-shadow:0 0 0 2px var(--blue)}.visit{background:#fff;border:1px solid var(--line);border-left:6px solid var(--blue);border-radius:13px;padding:15px;margin-bottom:11px}.visit.today-card{box-shadow:0 0 0 3px #1d557e14}.visit-top{display:flex;justify-content:space-between;gap:13px;align-items:flex-start}.visit h3{margin:0;font-size:18px}.company{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;font-weight:800;margin-top:4px}.dot{width:10px;height:10px;border-radius:50%}.badges{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}.badge{padding:5px 8px;border-radius:999px;font-size:11px;font-weight:900;white-space:nowrap}.green{background:#e7f6ed;color:var(--green)}.red{background:#ffe7e9;color:#aa2632}.orange{background:#fff0e2;color:var(--orange)}.yellow{background:#fff6d8;color:var(--yellow)}.blue{background:#e7f2fa;color:var(--blue)}.purple{background:#efe9fb;color:var(--purple)}.gray{background:#edf0f3;color:#59636d}.meta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}.meta{background:#f6f8fa;border-radius:9px;padding:9px}.meta small{display:block;color:var(--muted);font-weight:750;margin-bottom:3px}.meta b{font-size:13px}.notes{font-size:14px;line-height:1.45;color:#45515d}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}.actions .btn{font-size:12px;padding:8px 10px}.empty{text-align:center;color:var(--muted);padding:45px 15px}.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:14px}
-@media(max-width:980px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.tools{grid-template-columns:1fr 1fr}.meta-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:620px){.stats{grid-template-columns:1fr 1fr}.tools,.cols,.meta-grid{grid-template-columns:1fr}.visit-top{flex-direction:column}.badges{justify-content:flex-start}h1{font-size:24px}}
-</style>
+<link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
-<header><div class="head"><div><h1>Plan de Auditorías</h1><p class="sub">Organiza empresas, locaciones, tiempos y fechas en una línea de tiempo actualizada.</p></div><div class="today"><b>HOY</b><span id="todayText"></span></div></div></header>
+<header>
+  <div class="head">
+    <div><h1>Plan de Auditorías</h1><p class="sub">Organiza empresas, locaciones, tiempos y fechas en una línea de tiempo y calendario.</p></div>
+    <div class="today"><b>HOY</b><span id="todayText"></span></div>
+  </div>
+</header>
 <main>
-<section class="stats"><div class="stat"><small>Total de visitas</small><strong id="total">0</strong></div><div class="stat"><small>Próximas 14 días</small><strong id="soon">0</strong></div><div class="stat"><small>Vencidas</small><strong id="late">0</strong></div><div class="stat"><small>Completadas</small><strong id="done">0</strong></div></section>
+<section class="stats">
+  <div class="stat"><small>Total de visitas</small><strong id="total">0</strong></div>
+  <div class="stat"><small>Próximas 14 días</small><strong id="soon">0</strong></div>
+  <div class="stat"><small>Vencidas</small><strong id="late">0</strong></div>
+  <div class="stat"><small>Completadas</small><strong id="done">0</strong></div>
+</section>
 <div class="layout">
-<aside class="card pad"><h2 id="formTitle">Nueva visita</h2>
-<form id="form"><input type="hidden" id="editId">
-<div class="field"><label>Empresa</label><select id="company" required></select></div>
-<div class="field"><label>Locación</label><input id="location" placeholder="Ej. Almacén Cozumel" required></div>
-<div class="cols"><div class="field"><label>Fecha</label><input id="date" type="date" required></div><div class="field"><label>Hora de inicio</label><input id="time" type="time" required></div></div>
-<div class="cols"><div class="field"><label>Duración</label><input id="duration" type="number" min="0.5" step="0.5" value="2" required></div><div class="field"><label>Unidad</label><select id="unit"><option>Horas</option><option>Días</option></select></div></div>
-<div class="field"><label>Actividad</label><input id="activity" placeholder="Ej. Conteo físico y revisión documental" required></div>
-<div class="field"><label>Responsable</label><input id="responsible" placeholder="Ej. José"></div>
-<div class="field"><label>Estatus</label><select id="status"><option>Pendiente</option><option>En proceso</option><option>Completada</option><option>Cancelada</option></select></div>
-<div class="field"><label>Observaciones</label><textarea id="notes" placeholder="Detalles, alcance, documentos, pendientes..."></textarea></div>
-<div class="btns"><button class="btn primary" type="submit" id="saveBtn">Guardar visita</button><button class="btn soft" type="button" id="cancelBtn" hidden>Cancelar</button></div>
-</form>
-<div class="settings"><h3>Empresas y colores</h3><div class="company-row"><input id="c1name" value="Empresa 1"><input id="c1color" type="color" value="#1d557e"></div><div class="company-row"><input id="c2name" value="Empresa 2"><input id="c2color" type="color" value="#6a45b8"></div><button class="btn soft" style="width:100%" id="saveCompanies">Guardar empresas</button></div>
-<div class="settings"><h3>Respaldo</h3><div class="btns"><button class="btn good" id="exportBtn">Exportar</button><button class="btn soft" id="importBtn">Importar</button><input id="file" type="file" accept=".json" hidden></div></div>
+<aside class="card pad">
+  <h2 id="formTitle">Nueva visita</h2>
+  <form id="form"><input type="hidden" id="editId">
+    <div class="field"><label>Empresa</label><select id="company" required></select></div>
+    <div class="field"><label>Locación</label><input id="location" placeholder="Ej. Almacén Cozumel" required></div>
+    <div class="cols">
+      <div class="field"><label>Fecha de inicio</label><input id="date" type="date" required></div>
+      <div class="field"><label>Hora de inicio</label><input id="time" type="time" required></div>
+    </div>
+    <div class="cols">
+      <div class="field"><label>Fecha de término</label><input id="endDate" type="date" required></div>
+      <div class="field"><label>Hora de término</label><input id="endTime" type="time"></div>
+    </div>
+    <div class="cols">
+      <div class="field"><label>Duración estimada</label><input id="duration" type="number" min="0.5" step="0.5" value="2" required></div>
+      <div class="field"><label>Unidad</label><select id="unit"><option>Horas</option><option>Días</option></select></div>
+    </div>
+    <div class="field"><label>Actividad</label><input id="activity" placeholder="Ej. Conteo físico y revisión documental" required></div>
+    <div class="field"><label>Responsable</label><input id="responsible" placeholder="Ej. José"></div>
+    <div class="field"><label>Estatus</label><select id="status"><option>Pendiente</option><option>En proceso</option><option>Completada</option><option>Cancelada</option></select></div>
+    <div class="field"><label>Observaciones</label><textarea id="notes" placeholder="Detalles, alcance, documentos, pendientes..."></textarea></div>
+    <div class="btns"><button class="btn primary" type="submit" id="saveBtn">Guardar visita</button><button class="btn soft" type="button" id="cancelBtn" hidden>Cancelar</button></div>
+  </form>
+  <div class="settings">
+    <h3>Empresas y colores</h3>
+    <div class="company-row"><input id="c1name" value="Empresa 1"><input id="c1color" type="color" value="#1d557e"></div>
+    <div class="company-row"><input id="c2name" value="Empresa 2"><input id="c2color" type="color" value="#6a45b8"></div>
+    <button class="btn soft" style="width:100%" id="saveCompanies">Guardar empresas</button>
+  </div>
+  <div class="settings"><h3>Respaldo</h3><div class="btns"><button class="btn good" id="exportBtn">Exportar</button><button class="btn soft" id="importBtn">Importar</button><input id="file" type="file" accept=".json" hidden></div></div>
 </aside>
-<section><div class="tools"><input id="search" type="search" placeholder="Buscar locación, actividad o responsable"><select id="companyFilter"><option value="">Todas las empresas</option></select><select id="statusFilter"><option value="">Todos los estatus</option><option>Pendiente</option><option>En proceso</option><option>Completada</option><option>Cancelada</option></select><select id="dateFilter"><option value="">Todas las fechas</option><option value="today">Hoy</option><option value="week">Próximos 7 días</option><option value="month">Próximos 30 días</option><option value="late">Vencidas</option></select><button class="btn soft" id="clear">Limpiar</button></div>
-<div class="card pad"><h2>Línea de tiempo</h2><div id="timeline" class="timeline"></div></div><div class="foot">Los datos se guardan automáticamente en este navegador.</div></section>
-</div></main>
-<script>
-const KEY='auditVisitsV2',CKEY='auditCompaniesV2';let visits=[],companies=[{id:'c1',name:'Empresa 1',color:'#1d557e'},{id:'c2',name:'Empresa 2',color:'#6a45b8'}];const $=id=>document.getElementById(id);
-function load(){try{const v=JSON.parse(localStorage.getItem(KEY)||'[]'),c=JSON.parse(localStorage.getItem(CKEY)||'null');visits=Array.isArray(v)?v:[];if(Array.isArray(c)&&c.length===2)companies=c}catch(e){}}
-function save(){localStorage.setItem(KEY,JSON.stringify(visits));localStorage.setItem(CKEY,JSON.stringify(companies))}
-function ymd(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
-function dateObj(s,t='00:00'){const [y,m,d]=s.split('-').map(Number),[h,mi]=(t||'00:00').split(':').map(Number);return new Date(y,m-1,d,h||0,mi||0)}
-function diff(s){return Math.round((dateObj(s)-dateObj(ymd()))/86400000)}
-function esc(x){return String(x??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
-function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
-function company(id){return companies.find(c=>c.id===id)||companies[0]}
-function formatDate(s){return cap(dateObj(s).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}
-function formatTime(t){return dateObj('2000-01-01',t).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'})}
-function alertData(v){if(v.status==='Completada')return['Completada','green'];if(v.status==='Cancelada')return['Cancelada','gray'];const d=diff(v.date);if(d<0)return[`Vencida hace ${Math.abs(d)} día${Math.abs(d)==1?'':'s'}`,'red'];if(d===0)return['Es hoy','red'];if(d<=2)return[`Faltan ${d} día${d==1?'':'s'}`,'red'];if(d<=6)return[`Faltan ${d} días`,'orange'];if(d<=14)return[`Faltan ${d} días`,'yellow'];return[`Faltan ${d} días`,'green']}
-function statusClass(s){return {'Pendiente':'blue','En proceso':'purple','Completada':'green','Cancelada':'gray'}[s]||'gray'}
-function refreshCompanies(){company.innerHTML='';$('company').innerHTML=companies.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');$('companyFilter').innerHTML='<option value="">Todas las empresas</option>'+companies.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');$('c1name').value=companies[0].name;$('c1color').value=companies[0].color;$('c2name').value=companies[1].name;$('c2color').value=companies[1].color}
-function stats(){const active=visits.filter(v=>v.status!=='Cancelada');$('total').textContent=visits.length;$('soon').textContent=active.filter(v=>diff(v.date)>=0&&diff(v.date)<=14&&v.status!=='Completada').length;$('late').textContent=active.filter(v=>diff(v.date)<0&&v.status!=='Completada').length;$('done').textContent=visits.filter(v=>v.status==='Completada').length}
-function filtered(){const q=$('search').value.trim().toLowerCase(),cf=$('companyFilter').value,sf=$('statusFilter').value,df=$('dateFilter').value;return visits.filter(v=>{const text=`${v.location} ${v.activity} ${v.responsible||''} ${v.notes||''}`.toLowerCase();if(q&&!text.includes(q))return false;if(cf&&v.companyId!==cf)return false;if(sf&&v.status!==sf)return false;const d=diff(v.date);if(df==='today'&&d!==0)return false;if(df==='week'&&!(d>=0&&d<=7))return false;if(df==='month'&&!(d>=0&&d<=30))return false;if(df==='late'&&!(d<0&&v.status!=='Completada'))return false;return true}).sort((a,b)=>dateObj(a.date,a.time)-dateObj(b.date,b.time))}
-function card(v){const c=company(v.companyId),[txt,cls]=alertData(v);return `<article class="visit ${diff(v.date)===0?'today-card':''}" style="border-left-color:${c.color}"><div class="visit-top"><div><h3>${esc(v.location)}</h3><div class="company"><span class="dot" style="background:${c.color}"></span>${esc(c.name)}</div></div><div class="badges"><span class="badge ${statusClass(v.status)}">${esc(v.status)}</span><span class="badge ${cls}">${txt}</span></div></div><div class="meta-grid"><div class="meta"><small>Hora</small><b>${formatTime(v.time)}</b></div><div class="meta"><small>Duración</small><b>${esc(v.duration)} ${esc(v.unit)}</b></div><div class="meta"><small>Actividad</small><b>${esc(v.activity)}</b></div><div class="meta"><small>Responsable</small><b>${esc(v.responsible||'Sin asignar')}</b></div></div>${v.notes?`<div class="notes">${esc(v.notes)}</div>`:''}<div class="actions">${v.status!=='Completada'?`<button class="btn good" onclick="completeVisit('${v.id}')">Marcar completada</button>`:''}<button class="btn soft" onclick="editVisit('${v.id}')">Editar</button><button class="btn bad" onclick="removeVisit('${v.id}')">Eliminar</button></div></article>`}
-function render(){stats();const f=filtered(),box=$('timeline');if(!f.length){box.innerHTML='<div class="empty"><b>No hay visitas para mostrar.</b><br>Agrega una visita o cambia los filtros.</div>';return}const groups={};f.forEach(v=>(groups[v.date]??=[]).push(v));box.innerHTML=Object.entries(groups).map(([d,a])=>`<div class="group"><h3 class="date">${formatDate(d)}${diff(d)===0?' · HOY':''}</h3>${a.map(card).join('')}</div>`).join('')}
-function reset(){form.reset();$('editId').value='';$('formTitle').textContent='Nueva visita';$('saveBtn').textContent='Guardar visita';$('cancelBtn').hidden=true;$('duration').value=2;$('date').value=ymd();$('time').value='09:00';$('status').value='Pendiente';$('company').value=companies[0].id}
-form.addEventListener('submit',e=>{e.preventDefault();const v={id:$('editId').value||(crypto.randomUUID?crypto.randomUUID():String(Date.now())),companyId:$('company').value,location:$('location').value.trim(),date:$('date').value,time:$('time').value,duration:Number($('duration').value),unit:$('unit').value,activity:$('activity').value.trim(),responsible:$('responsible').value.trim(),status:$('status').value,notes:$('notes').value.trim()};const i=visits.findIndex(x=>x.id===v.id);i>=0?visits[i]=v:visits.push(v);save();reset();render()});
-window.editVisit=id=>{const v=visits.find(x=>x.id===id);if(!v)return;$('editId').value=v.id;$('company').value=v.companyId;$('location').value=v.location;$('date').value=v.date;$('time').value=v.time;$('duration').value=v.duration;$('unit').value=v.unit;$('activity').value=v.activity;$('responsible').value=v.responsible||'';$('status').value=v.status;$('notes').value=v.notes||'';$('formTitle').textContent='Editar visita';$('saveBtn').textContent='Guardar cambios';$('cancelBtn').hidden=false;scrollTo({top:0,behavior:'smooth'})};
-window.removeVisit=id=>{if(confirm('¿Eliminar esta visita?')){visits=visits.filter(v=>v.id!==id);save();render()}};window.completeVisit=id=>{const v=visits.find(x=>x.id===id);if(v){v.status='Completada';save();render()}};
-$('cancelBtn').onclick=reset;$('saveCompanies').onclick=()=>{companies=[{id:'c1',name:$('c1name').value.trim()||'Empresa 1',color:$('c1color').value},{id:'c2',name:$('c2name').value.trim()||'Empresa 2',color:$('c2color').value}];save();refreshCompanies();render();alert('Empresas actualizadas')};
-['search','companyFilter','statusFilter','dateFilter'].forEach(id=>{$(id).addEventListener('input',render);$(id).addEventListener('change',render)});$('clear').onclick=()=>{$('search').value='';$('companyFilter').value='';$('statusFilter').value='';$('dateFilter').value='';render()};
-$('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify({companies,visits},null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=`respaldo-auditorias-${ymd()}.json`;a.click();URL.revokeObjectURL(u)};$('importBtn').onclick=()=>$('file').click();$('file').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!Array.isArray(x.visits)||!Array.isArray(x.companies))throw 0;if(confirm('Esto reemplazará la información actual. ¿Continuar?')){visits=x.visits;companies=x.companies;save();refreshCompanies();reset();render()}}catch{alert('El archivo no es un respaldo válido')}e.target.value=''};
-function today(){$('todayText').textContent=new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}load();today();refreshCompanies();reset();render();setInterval(()=>{today();stats();render()},60000);
-</script>
+<section>
+  <div class="tools">
+    <input id="search" type="search" placeholder="Buscar locación, actividad o responsable">
+    <select id="companyFilter"><option value="">Todas las empresas</option></select>
+    <select id="statusFilter"><option value="">Todos los estatus</option><option>Pendiente</option><option>En proceso</option><option>Completada</option><option>Cancelada</option></select>
+    <select id="dateFilter"><option value="">Todas las fechas</option><option value="today">Activas hoy</option><option value="week">Inician en 7 días</option><option value="month">Inician en 30 días</option><option value="late">Vencidas</option></select>
+    <button class="btn soft" id="clear">Limpiar</button>
+  </div>
+  <div class="card pad">
+    <div class="section-head">
+      <h2>Calendario</h2>
+      <div class="calendar-nav">
+        <button class="btn soft" id="prevMonth" title="Mes anterior">←</button>
+        <button class="btn soft" id="todayMonth">Hoy</button>
+        <div class="calendar-title" id="calendarTitle"></div>
+        <button class="btn soft" id="nextMonth" title="Mes siguiente">→</button>
+      </div>
+    </div>
+    <div class="calendar-wrap"><div class="calendar-inner">
+      <div class="calendar-weekdays"><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div></div>
+      <div id="calendarGrid" class="calendar-grid"></div>
+    </div></div>
+  </div>
+  <div class="spacer"></div>
+  <div class="card pad"><h2>Línea de tiempo</h2><div id="timeline" class="timeline"></div></div>
+  <div class="foot">Los datos se guardan automáticamente en este navegador.</div>
+</section>
+</div>
+</main>
+<script src="app.js?v=2"></script>
 </body>
 </html>
