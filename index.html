@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Plan de Auditorías</title>
-<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 <header>
@@ -21,36 +21,55 @@
   <div class="stat"><small>Completadas</small><strong id="done">0</strong></div>
 </section>
 <div class="layout">
-<aside class="card pad">
-  <h2 id="formTitle">Nueva visita</h2>
-  <form id="form"><input type="hidden" id="editId">
-    <div class="field"><label>Empresa</label><select id="company" required></select></div>
-    <div class="field"><label>Locación</label><input id="location" placeholder="Ej. Almacén Cozumel" required></div>
-    <div class="cols">
-      <div class="field"><label>Fecha de inicio</label><input id="date" type="date" required></div>
-      <div class="field"><label>Hora de inicio</label><input id="time" type="time" required></div>
+<aside class="side-column">
+  <div class="card pad location-panel">
+    <div class="section-head location-heading">
+      <div><h2>Bloc de locaciones</h2><p class="mini">Consulta cuándo se auditó por última vez cada lugar.</p></div>
+      <span class="count-pill" id="locationCount">0</span>
     </div>
-    <div class="cols">
-      <div class="field"><label>Fecha de término</label><input id="endDate" type="date" required></div>
-      <div class="field"><label>Hora de término</label><input id="endTime" type="time"></div>
-    </div>
-    <div class="cols">
-      <div class="field"><label>Duración estimada</label><input id="duration" type="number" min="0.5" step="0.5" value="2" required></div>
-      <div class="field"><label>Unidad</label><select id="unit"><option>Horas</option><option>Días</option></select></div>
-    </div>
-    <div class="field"><label>Actividad</label><input id="activity" placeholder="Ej. Conteo físico y revisión documental" required></div>
-    <div class="field"><label>Responsable</label><input id="responsible" placeholder="Ej. José"></div>
-    <div class="field"><label>Estatus</label><select id="status"><option>Pendiente</option><option>En proceso</option><option>Completada</option><option>Cancelada</option></select></div>
-    <div class="field"><label>Observaciones</label><textarea id="notes" placeholder="Detalles, alcance, documentos, pendientes..."></textarea></div>
-    <div class="btns"><button class="btn primary" type="submit" id="saveBtn">Guardar visita</button><button class="btn soft" type="button" id="cancelBtn" hidden>Cancelar</button></div>
-  </form>
-  <div class="settings">
-    <h3>Empresas y colores</h3>
-    <div class="company-row"><input id="c1name" value="Empresa 1"><input id="c1color" type="color" value="#1d557e"></div>
-    <div class="company-row"><input id="c2name" value="Empresa 2"><input id="c2color" type="color" value="#6a45b8"></div>
-    <button class="btn soft" style="width:100%" id="saveCompanies">Guardar empresas</button>
+    <form id="locationForm">
+      <input type="hidden" id="locationEditId">
+      <div class="field"><label>Empresa</label><select id="locationCompany" required></select></div>
+      <div class="field"><label>Locación</label><input id="locationName" placeholder="Ej. Almacén Cozumel" required></div>
+      <div class="field"><label>Fecha de última auditoría</label><input id="lastAuditDate" type="date"></div>
+      <div class="field"><label>Nota rápida</label><textarea id="locationNote" class="compact-textarea" placeholder="Pendientes, área crítica, contacto..."></textarea></div>
+      <div class="btns"><button class="btn primary" type="submit" id="saveLocationBtn">Guardar locación</button><button class="btn soft" type="button" id="cancelLocationBtn" hidden>Cancelar</button></div>
+    </form>
+    <div class="location-search"><input id="locationSearch" type="search" placeholder="Buscar locación..."></div>
+    <div id="locationList" class="location-list"></div>
   </div>
-  <div class="settings"><h3>Respaldo</h3><div class="btns"><button class="btn good" id="exportBtn">Exportar</button><button class="btn soft" id="importBtn">Importar</button><input id="file" type="file" accept=".json" hidden></div></div>
+
+  <div class="card pad" id="visitCard">
+    <h2 id="formTitle">Nueva visita</h2>
+    <form id="form"><input type="hidden" id="editId">
+      <div class="field"><label>Empresa</label><select id="company" required></select></div>
+      <div class="field"><label>Locación</label><input id="location" placeholder="Ej. Almacén Cozumel" required></div>
+      <div class="cols">
+        <div class="field"><label>Fecha de inicio</label><input id="date" type="date" required></div>
+        <div class="field"><label>Hora de inicio</label><input id="time" type="time" required></div>
+      </div>
+      <div class="cols">
+        <div class="field"><label>Fecha de término</label><input id="endDate" type="date" required></div>
+        <div class="field"><label>Hora de término</label><input id="endTime" type="time"></div>
+      </div>
+      <div class="cols">
+        <div class="field"><label>Duración estimada</label><input id="duration" type="number" min="0.5" step="0.5" value="2" required></div>
+        <div class="field"><label>Unidad</label><select id="unit"><option>Horas</option><option>Días</option></select></div>
+      </div>
+      <div class="field"><label>Actividad</label><input id="activity" placeholder="Ej. Conteo físico y revisión documental" required></div>
+      <div class="field"><label>Responsable</label><input id="responsible" placeholder="Ej. José"></div>
+      <div class="field"><label>Estatus</label><select id="status"><option>Pendiente</option><option>En proceso</option><option>Completada</option><option>Cancelada</option></select></div>
+      <div class="field"><label>Observaciones</label><textarea id="notes" placeholder="Detalles, alcance, documentos, pendientes..."></textarea></div>
+      <div class="btns"><button class="btn primary" type="submit" id="saveBtn">Guardar visita</button><button class="btn soft" type="button" id="cancelBtn" hidden>Cancelar</button></div>
+    </form>
+    <div class="settings">
+      <h3>Empresas y colores</h3>
+      <div class="company-row"><input id="c1name" value="Empresa 1"><input id="c1color" type="color" value="#1d557e"></div>
+      <div class="company-row"><input id="c2name" value="Empresa 2"><input id="c2color" type="color" value="#6a45b8"></div>
+      <button class="btn soft" style="width:100%" id="saveCompanies">Guardar empresas</button>
+    </div>
+    <div class="settings"><h3>Respaldo</h3><div class="btns"><button class="btn good" id="exportBtn">Exportar</button><button class="btn soft" id="importBtn">Importar</button><input id="file" type="file" accept=".json" hidden></div></div>
+  </div>
 </aside>
 <section>
   <div class="tools">
@@ -81,6 +100,6 @@
 </section>
 </div>
 </main>
-<script src="app.js?v=2"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>
