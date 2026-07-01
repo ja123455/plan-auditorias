@@ -123,5 +123,37 @@
 </div>
 </main>
 <script src="app.js?v=5"></script>
+<script>
+(() => {
+  const stateKey = 'auditLocationEditorHiddenV1';
+  const grid = document.getElementById('locationManagerGrid');
+  const button = document.getElementById('toggleLocationEditor');
+  const list = document.getElementById('locationList');
+  if (!grid || !button || !list) return;
+
+  let hidden = localStorage.getItem(stateKey) === '1';
+  const apply = () => {
+    grid.classList.toggle('editor-hidden', hidden);
+    button.textContent = hidden ? 'Administrar locaciones' : 'Ocultar formulario';
+    button.setAttribute('aria-expanded', String(!hidden));
+  };
+
+  button.addEventListener('click', () => {
+    hidden = !hidden;
+    localStorage.setItem(stateKey, hidden ? '1' : '0');
+    apply();
+  });
+
+  list.addEventListener('click', (event) => {
+    const editButton = event.target.closest('[data-loc-action="edit"]');
+    if (!editButton) return;
+    hidden = false;
+    localStorage.setItem(stateKey, '0');
+    apply();
+  }, true);
+
+  apply();
+})();
+</script>
 </body>
 </html>
