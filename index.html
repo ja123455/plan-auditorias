@@ -7,7 +7,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>Plan de Auditorías</title>
-<link rel="stylesheet" href="styles.css?v=13">
+<link rel="stylesheet" href="styles.css?v=14">
 <style>
 .location-date span{font-size:0}
 .location-date span::after{content:"Fecha exacta";font-size:11px;color:var(--muted);font-weight:800}
@@ -30,6 +30,9 @@
 .location-item.shared-location-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(to bottom,var(--shared-a) 0 50%,var(--shared-b) 50% 100%)}
 .location-manager-person{margin-top:8px;padding:7px 9px;border-radius:8px;background:#f6f8fa;font-size:11px;color:#4c5964}
 .location-manager-person b{color:var(--ink)}
+.shared-company-field[hidden]{display:none}
+.shared-company-subtitle{display:flex;align-items:center;gap:6px;margin-top:5px;font-size:11px;font-weight:900;color:#4c5964}
+.shared-company-subtitle .dot{width:8px;height:8px}
 .calendar-event-details{margin-top:18px}
 .event-help{margin:4px 0 12px;color:var(--muted);font-size:12px;line-height:1.4}
 .event-list{display:grid;gap:8px;margin-top:12px;max-height:360px;overflow:auto;padding-right:3px}
@@ -81,7 +84,7 @@
         </div>
         <div class="location-filters">
           <select id="locationCompanyFilter" aria-label="Filtrar locaciones por empresa"><option value="">Todas las empresas</option></select>
-          <input id="locationSearch" type="search" placeholder="Buscar locación o gerente...">
+          <input id="locationSearch" type="search" placeholder="Buscar locación, gerente o empresa base...">
         </div>
       </div>
       <div id="locationList" class="location-list"></div>
@@ -93,6 +96,11 @@
         <input type="hidden" id="locationEditId">
         <div class="field"><label>Empresa</label><select id="locationCompany" required></select></div>
         <div class="field"><label>Locación</label><input id="locationName" placeholder="Ej. Almacén Cozumel" required></div>
+        <div class="field shared-company-field" id="sharedPrimaryCompanyField" hidden>
+          <label>Empresa bajo la que está la locación</label>
+          <select id="locationPrimaryCompany"></select>
+          <p class="mini">Se mostrará como subtítulo aunque la locación pertenezca a ambas empresas.</p>
+        </div>
         <div class="field"><label>Nombre del gerente de locación</label><input id="locationManagerName" placeholder="Ej. Ana López"></div>
         <div class="field"><label>Fecha de última auditoría</label><input id="lastAuditDate" type="date"></div>
         <div class="field"><label>Nota rápida</label><textarea id="locationNote" class="compact-textarea" placeholder="Pendientes, área crítica, contacto..."></textarea></div>
@@ -193,13 +201,13 @@
   </div>
   <div class="spacer"></div>
   <div class="card pad"><h2>Línea de tiempo</h2><div id="timeline" class="timeline"></div></div>
-  <div class="foot">Los datos se guardan automáticamente en este navegador. <span class="version-mark">Versión 13</span></div>
+  <div class="foot">Los datos se guardan automáticamente en este navegador. <span class="version-mark">Versión 14</span></div>
 </section>
 </div>
 </main>
 <script src="app.js?v=9"></script>
 <script src="events.js?v=2"></script>
-<script src="location-manager.js?v=1"></script>
+<script src="location-manager.js?v=2"></script>
 <script>
 (() => {
   const stateKey = 'auditLocationEditorHiddenV1';
@@ -249,7 +257,10 @@
     const selectedCompany = companyFilter.value;
     const matches = locationNotes.filter(l => {
       const matchesCompany = !selectedCompany || l.companyId === selectedCompany;
-      const matchesSearch = `${l.name} ${l.managerName||''} ${l.note||''} ${company(l.companyId).name}`.toLowerCase().includes(q);
+      const primaryCompanyName = l.primaryCompanyId
+        ? (companies.find(companyItem => companyItem.id === l.primaryCompanyId)?.name || '')
+        : '';
+      const matchesSearch = `${l.name} ${l.managerName||''} ${primaryCompanyName} ${l.note||''} ${company(l.companyId).name}`.toLowerCase().includes(q);
       return matchesCompany && matchesSearch;
     });
     $('locationCount').textContent = locationNotes.length;
@@ -267,11 +278,14 @@
         : `background:${c.color}12`;
       const cards = groupLocations.map(l => {
         const age = locationAgeInfo(l.lastAuditDate);
+        const primaryCompany = c.shared && l.primaryCompanyId
+          ? companies.find(companyItem => companyItem.id === l.primaryCompanyId)
+          : null;
         const cardStyle = c.shared
           ? `--shared-a:${c.colors[0]};--shared-b:${c.colors[1]};background:linear-gradient(90deg,${c.colors[0]}0d 0 50%,${c.colors[1]}0d 50% 100%)`
           : `border-left-color:${c.color}`;
         return `<article class="location-item ${c.shared?'shared-location-card':''}" style="${cardStyle}">
-          <div class="location-top"><div><h3 class="location-title">${esc(l.name)}</h3><div class="location-company">${companyMarker(c)}${esc(c.name)}</div></div><span class="age-chip ${age.cls}">${age.label}</span></div>
+          <div class="location-top"><div><h3 class="location-title">${esc(l.name)}</h3><div class="location-company">${companyMarker(c)}${esc(c.name)}</div>${c.shared?`<div class="shared-company-subtitle">${primaryCompany?`<span class="dot" style="background:${primaryCompany.color}"></span>Bajo el nombre de: ${esc(primaryCompany.name)}`:'Bajo el nombre de: Sin definir'}</div>`:''}</div><span class="age-chip ${age.cls}">${age.label}</span></div>
           ${l.managerName?`<div class="location-manager-person"><b>Gerente:</b> ${esc(l.managerName)}</div>`:'<div class="location-manager-person"><b>Gerente:</b> Sin registrar</div>'}
           <div class="location-date"><span>Fecha exacta</span><b>${l.lastAuditDate?formatDate(l.lastAuditDate,false):'Sin fecha'}</b></div>
           ${l.note?`<div class="location-note">${esc(l.note)}</div>`:''}
