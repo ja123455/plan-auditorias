@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Plan de Auditorías</title>
 <link rel="stylesheet" href="styles.css?v=6">
+<style>
+.location-date span{font-size:0}
+.location-date span::after{content:"Fecha exacta";font-size:11px;color:var(--muted);font-weight:800}
+.settings-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.settings-title-row h3{margin:0}
+.settings-toggle{padding:6px 9px;font-size:11px}
+.company-settings.is-hidden #companySettingsBody{display:none}
+.company-settings.is-hidden{padding-bottom:0}
+</style>
 </head>
 <body>
 <header>
@@ -84,11 +93,16 @@
     <div class="field"><label>Observaciones</label><textarea id="notes" placeholder="Detalles, alcance, documentos, pendientes..."></textarea></div>
     <div class="btns"><button class="btn primary" type="submit" id="saveBtn">Guardar visita</button><button class="btn soft" type="button" id="cancelBtn" hidden>Cancelar</button></div>
   </form>
-  <div class="settings">
-    <h3>Empresas y colores</h3>
-    <div class="company-row"><input id="c1name" value="Empresa 1"><input id="c1color" type="color" value="#1d557e"></div>
-    <div class="company-row"><input id="c2name" value="Empresa 2"><input id="c2color" type="color" value="#6a45b8"></div>
-    <button class="btn soft" style="width:100%" id="saveCompanies">Guardar empresas</button>
+  <div class="settings company-settings" id="companySettings">
+    <div class="settings-title-row">
+      <h3>Empresas y colores</h3>
+      <button class="btn soft settings-toggle" type="button" id="toggleCompanySettings">Ocultar</button>
+    </div>
+    <div id="companySettingsBody">
+      <div class="company-row"><input id="c1name" value="Empresa 1"><input id="c1color" type="color" value="#1d557e"></div>
+      <div class="company-row"><input id="c2name" value="Empresa 2"><input id="c2color" type="color" value="#6a45b8"></div>
+      <button class="btn soft" style="width:100%" id="saveCompanies">Guardar empresas</button>
+    </div>
   </div>
   <div class="settings"><h3>Respaldo</h3><div class="btns"><button class="btn good" id="exportBtn">Exportar</button><button class="btn soft" id="importBtn">Importar</button><input id="file" type="file" accept=".json" hidden></div></div>
 </aside>
@@ -130,20 +144,17 @@
   const button = document.getElementById('toggleLocationEditor');
   const list = document.getElementById('locationList');
   if (!grid || !button || !list) return;
-
   let hidden = localStorage.getItem(stateKey) === '1';
   const apply = () => {
     grid.classList.toggle('editor-hidden', hidden);
     button.textContent = hidden ? 'Administrar locaciones' : 'Ocultar formulario';
     button.setAttribute('aria-expanded', String(!hidden));
   };
-
   button.addEventListener('click', () => {
     hidden = !hidden;
     localStorage.setItem(stateKey, hidden ? '1' : '0');
     apply();
   });
-
   list.addEventListener('click', (event) => {
     const editButton = event.target.closest('[data-loc-action="edit"]');
     if (!editButton) return;
@@ -151,7 +162,25 @@
     localStorage.setItem(stateKey, '0');
     apply();
   }, true);
+  apply();
+})();
 
+(() => {
+  const stateKey = 'auditCompanySettingsHiddenV1';
+  const section = document.getElementById('companySettings');
+  const button = document.getElementById('toggleCompanySettings');
+  if (!section || !button) return;
+  let hidden = localStorage.getItem(stateKey) === '1';
+  const apply = () => {
+    section.classList.toggle('is-hidden', hidden);
+    button.textContent = hidden ? 'Mostrar empresas' : 'Ocultar';
+    button.setAttribute('aria-expanded', String(!hidden));
+  };
+  button.addEventListener('click', () => {
+    hidden = !hidden;
+    localStorage.setItem(stateKey, hidden ? '1' : '0');
+    apply();
+  });
   apply();
 })();
 </script>
