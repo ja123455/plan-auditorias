@@ -7,7 +7,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>Plan de Auditorías</title>
-<link rel="stylesheet" href="styles.css?v=10">
+<link rel="stylesheet" href="styles.css?v=11">
 <style>
 .location-date span{font-size:0}
 .location-date span::after{content:"Fecha exacta";font-size:11px;color:var(--muted);font-weight:800}
@@ -25,7 +25,10 @@
 .location-company-header strong{font-size:14px}
 .location-company-header small{color:var(--muted);font-weight:800;white-space:nowrap}
 .location-company-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
-.location-item.shared-location-card{background-repeat:no-repeat}
+.location-filters{display:grid;grid-template-columns:minmax(150px,.8fr) minmax(210px,1.2fr);gap:8px}
+.location-item.shared-location-card{position:relative;border-left:0!important;overflow:hidden;background-repeat:no-repeat;padding-left:16px}
+.location-item.shared-location-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(to bottom,var(--shared-a) 0 50%,var(--shared-b) 50% 100%)}
+@media(max-width:760px){.location-filters{grid-template-columns:1fr}}
 @media(max-width:620px){.location-company-header{align-items:flex-start}.location-company-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -61,9 +64,12 @@
       <div class="location-browser-head">
         <div>
           <h3>Locaciones guardadas</h3>
-          <p class="mini">Primero se agrupan por empresa y después se ordenan por la auditoría más antigua.</p>
+          <p class="mini">Primero se filtran y agrupan por empresa; dentro de cada empresa se ordenan por la auditoría más antigua.</p>
         </div>
-        <input id="locationSearch" type="search" placeholder="Buscar locación...">
+        <div class="location-filters">
+          <select id="locationCompanyFilter" aria-label="Filtrar locaciones por empresa"><option value="">Todas las empresas</option></select>
+          <input id="locationSearch" type="search" placeholder="Buscar locación...">
+        </div>
       </div>
       <div id="locationList" class="location-list"></div>
     </div>
@@ -145,7 +151,7 @@
   </div>
   <div class="spacer"></div>
   <div class="card pad"><h2>Línea de tiempo</h2><div id="timeline" class="timeline"></div></div>
-  <div class="foot">Los datos se guardan automáticamente en este navegador. <span class="version-mark">Versión 10</span></div>
+  <div class="foot">Los datos se guardan automáticamente en este navegador. <span class="version-mark">Versión 11</span></div>
 </section>
 </div>
 </main>
@@ -179,6 +185,16 @@
 })();
 
 (() => {
+  const companyFilter = $('locationCompanyFilter');
+
+  const refreshLocationCompanyFilter = () => {
+    const selected = companyFilter.value;
+    companyFilter.innerHTML = '<option value="">Todas las empresas</option>'
+      + companies.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('')
+      + `<option value="${BOTH_ID}">Ambas empresas</option>`;
+    companyFilter.value = [...companies.map(c => c.id), BOTH_ID].includes(selected) ? selected : '';
+  };
+
   const compareLocations = (a,b) => {
     if (!a.lastAuditDate && !b.lastAuditDate) return a.name.localeCompare(b.name,'es');
     if (!a.lastAuditDate) return -1;
@@ -189,9 +205,14 @@
 
   renderLocations = function renderLocationsGrouped(){
     const q = $('locationSearch').value.trim().toLowerCase();
-    const matches = locationNotes.filter(l => `${l.name} ${l.note||''} ${company(l.companyId).name}`.toLowerCase().includes(q));
-    $('locationCount').textContent = locationNotes.length;
+    const selectedCompany = companyFilter.value;
+    const matches = locationNotes.filter(l => {
+      const matchesCompany = !selectedCompany || l.companyId === selectedCompany;
+      const matchesSearch = `${l.name} ${l.note||''} ${company(l.companyId).name}`.toLowerCase().includes(q);
+      return matchesCompany && matchesSearch;
+    });
 
+    $('locationCount').textContent = locationNotes.length;
     if (!matches.length) {
       $('locationList').innerHTML = '<div class="location-empty">No hay locaciones para mostrar.</div>';
       return;
@@ -203,13 +224,13 @@
       if (!groupLocations.length) return '';
       const c = company(companyId);
       const groupBackground = c.shared
-        ? `background:linear-gradient(90deg,${c.colors[0]}20 0 50%,${c.colors[1]}20 50% 100%)`
+        ? `background:linear-gradient(to bottom,${c.colors[0]}20 0 50%,${c.colors[1]}20 50% 100%)`
         : `background:${c.color}12`;
 
       const cards = groupLocations.map(l => {
         const age = locationAgeInfo(l.lastAuditDate);
         const cardStyle = c.shared
-          ? `background:linear-gradient(90deg,${c.colors[0]}18 0 50%,${c.colors[1]}18 50% 100%);border-left-color:transparent;box-shadow:inset 5px 0 0 ${c.colors[0]},inset 10px 0 0 ${c.colors[1]}`
+          ? `--shared-a:${c.colors[0]};--shared-b:${c.colors[1]};background:linear-gradient(90deg,${c.colors[0]}0d 0 50%,${c.colors[1]}0d 50% 100%)`
           : `border-left-color:${c.color}`;
         return `<article class="location-item ${c.shared?'shared-location-card':''}" style="${cardStyle}">
           <div class="location-top"><div><h3 class="location-title">${esc(l.name)}</h3><div class="location-company">${companyMarker(c)}${esc(c.name)}</div></div><span class="age-chip ${age.cls}">${age.label}</span></div>
@@ -229,7 +250,17 @@
     }).join('');
   };
 
+  refreshLocationCompanyFilter();
+  companyFilter.addEventListener('change', renderLocations);
   $('locationSearch').addEventListener('input', renderLocations);
+
+  const originalSaveCompanies = $('saveCompanies').onclick;
+  $('saveCompanies').onclick = event => {
+    originalSaveCompanies.call($('saveCompanies'), event);
+    refreshLocationCompanyFilter();
+    renderLocations();
+  };
+
   renderLocations();
 })();
 </script>
