@@ -4,15 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Plan de Auditorías</title>
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=7">
 <style>
 .location-date span{font-size:0}
 .location-date span::after{content:"Fecha exacta";font-size:11px;color:var(--muted);font-weight:800}
 .settings-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
 .settings-title-row h3{margin:0}
 .settings-toggle{padding:6px 9px;font-size:11px}
-.company-settings.is-hidden #companySettingsBody{display:none}
-.company-settings.is-hidden{padding-bottom:0}
+.company-settings.is-hidden{border-top:0;margin-top:8px;padding:0}
+.company-settings.is-hidden #companySettingsBody,.company-settings.is-hidden .settings-title-row h3{display:none}
+.company-settings.is-hidden .settings-title-row{margin:0}
+.company-settings.is-hidden .settings-toggle{width:100%;padding:8px 10px}
 </style>
 </head>
 <body>
@@ -96,7 +98,7 @@
   <div class="settings company-settings" id="companySettings">
     <div class="settings-title-row">
       <h3>Empresas y colores</h3>
-      <button class="btn soft settings-toggle" type="button" id="toggleCompanySettings">Ocultar</button>
+      <button class="btn soft settings-toggle" type="button" id="toggleCompanySettings">Ocultar empresas</button>
     </div>
     <div id="companySettingsBody">
       <div class="company-row"><input id="c1name" value="Empresa 1"><input id="c1color" type="color" value="#1d557e"></div>
@@ -173,7 +175,7 @@
   let hidden = localStorage.getItem(stateKey) === '1';
   const apply = () => {
     section.classList.toggle('is-hidden', hidden);
-    button.textContent = hidden ? 'Mostrar empresas' : 'Ocultar';
+    button.textContent = hidden ? 'Editar empresas' : 'Ocultar empresas';
     button.setAttribute('aria-expanded', String(!hidden));
   };
   button.addEventListener('click', () => {
