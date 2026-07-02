@@ -29,6 +29,11 @@ jobs:
         with:
           enablement: true
 
+      - name: Use GitHub Actions as the Pages source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method PUT "/repos/${{ github.repository }}/pages" -f build_type=workflow
+
       - name: Prepare static site
         run: |
           mkdir -p _site
