@@ -7,7 +7,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>Plan de Auditorías</title>
-<link rel="stylesheet" href="styles.css?v=9">
+<link rel="stylesheet" href="styles.css?v=10">
 <style>
 .location-date span{font-size:0}
 .location-date span::after{content:"Fecha exacta";font-size:11px;color:var(--muted);font-weight:800}
@@ -18,6 +18,15 @@
 .company-details[open] summary::after{content:"Ocultar"}
 .company-details-body{padding-top:10px}
 .version-mark{font-weight:800;color:#7b8792}
+.location-list{display:block;max-height:590px}
+.location-company-group+.location-company-group{margin-top:18px}
+.location-company-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:#f5f8fa}
+.location-company-header-main{display:flex;align-items:center;gap:8px;min-width:0}
+.location-company-header strong{font-size:14px}
+.location-company-header small{color:var(--muted);font-weight:800;white-space:nowrap}
+.location-company-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.location-item.shared-location-card{background-repeat:no-repeat}
+@media(max-width:620px){.location-company-header{align-items:flex-start}.location-company-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -52,7 +61,7 @@
       <div class="location-browser-head">
         <div>
           <h3>Locaciones guardadas</h3>
-          <p class="mini">Consulta la última auditoría o programa una nueva visita.</p>
+          <p class="mini">Primero se agrupan por empresa y después se ordenan por la auditoría más antigua.</p>
         </div>
         <input id="locationSearch" type="search" placeholder="Buscar locación...">
       </div>
@@ -136,11 +145,11 @@
   </div>
   <div class="spacer"></div>
   <div class="card pad"><h2>Línea de tiempo</h2><div id="timeline" class="timeline"></div></div>
-  <div class="foot">Los datos se guardan automáticamente en este navegador. <span class="version-mark">Versión 9</span></div>
+  <div class="foot">Los datos se guardan automáticamente en este navegador. <span class="version-mark">Versión 10</span></div>
 </section>
 </div>
 </main>
-<script src="app.js?v=6"></script>
+<script src="app.js?v=7"></script>
 <script>
 (() => {
   const stateKey = 'auditLocationEditorHiddenV1';
@@ -167,6 +176,61 @@
     apply();
   }, true);
   apply();
+})();
+
+(() => {
+  const compareLocations = (a,b) => {
+    if (!a.lastAuditDate && !b.lastAuditDate) return a.name.localeCompare(b.name,'es');
+    if (!a.lastAuditDate) return -1;
+    if (!b.lastAuditDate) return 1;
+    const dateDifference = dateObj(a.lastAuditDate) - dateObj(b.lastAuditDate);
+    return dateDifference || a.name.localeCompare(b.name,'es');
+  };
+
+  renderLocations = function renderLocationsGrouped(){
+    const q = $('locationSearch').value.trim().toLowerCase();
+    const matches = locationNotes.filter(l => `${l.name} ${l.note||''} ${company(l.companyId).name}`.toLowerCase().includes(q));
+    $('locationCount').textContent = locationNotes.length;
+
+    if (!matches.length) {
+      $('locationList').innerHTML = '<div class="location-empty">No hay locaciones para mostrar.</div>';
+      return;
+    }
+
+    const companyOrder = [...companies.map(c => c.id), BOTH_ID];
+    $('locationList').innerHTML = companyOrder.map(companyId => {
+      const groupLocations = matches.filter(l => l.companyId === companyId).sort(compareLocations);
+      if (!groupLocations.length) return '';
+      const c = company(companyId);
+      const groupBackground = c.shared
+        ? `background:linear-gradient(90deg,${c.colors[0]}20 0 50%,${c.colors[1]}20 50% 100%)`
+        : `background:${c.color}12`;
+
+      const cards = groupLocations.map(l => {
+        const age = locationAgeInfo(l.lastAuditDate);
+        const cardStyle = c.shared
+          ? `background:linear-gradient(90deg,${c.colors[0]}18 0 50%,${c.colors[1]}18 50% 100%);border-left-color:transparent;box-shadow:inset 5px 0 0 ${c.colors[0]},inset 10px 0 0 ${c.colors[1]}`
+          : `border-left-color:${c.color}`;
+        return `<article class="location-item ${c.shared?'shared-location-card':''}" style="${cardStyle}">
+          <div class="location-top"><div><h3 class="location-title">${esc(l.name)}</h3><div class="location-company">${companyMarker(c)}${esc(c.name)}</div></div><span class="age-chip ${age.cls}">${age.label}</span></div>
+          <div class="location-date"><span>Fecha exacta</span><b>${l.lastAuditDate?formatDate(l.lastAuditDate,false):'Sin fecha'}</b></div>
+          ${l.note?`<div class="location-note">${esc(l.note)}</div>`:''}
+          <div class="location-actions"><button class="btn good" data-loc-action="schedule" data-id="${l.id}">Programar</button><button class="btn soft" data-loc-action="edit" data-id="${l.id}">Editar</button><button class="btn bad" data-loc-action="remove" data-id="${l.id}">Eliminar</button></div>
+        </article>`;
+      }).join('');
+
+      return `<section class="location-company-group">
+        <div class="location-company-header" style="${groupBackground}">
+          <div class="location-company-header-main">${companyMarker(c)}<strong>${esc(c.name)}</strong></div>
+          <small>${groupLocations.length} locación${groupLocations.length===1?'':'es'}</small>
+        </div>
+        <div class="location-company-grid">${cards}</div>
+      </section>`;
+    }).join('');
+  };
+
+  $('locationSearch').addEventListener('input', renderLocations);
+  renderLocations();
 })();
 </script>
 </body>
