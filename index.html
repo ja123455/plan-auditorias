@@ -7,7 +7,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>Plan de Auditorías</title>
-<link rel="stylesheet" href="styles.css?v=12">
+<link rel="stylesheet" href="styles.css?v=13">
 <style>
 .location-date span{font-size:0}
 .location-date span::after{content:"Fecha exacta";font-size:11px;color:var(--muted);font-weight:800}
@@ -28,6 +28,8 @@
 .location-filters{display:grid;grid-template-columns:minmax(150px,.8fr) minmax(210px,1.2fr);gap:8px}
 .location-item.shared-location-card{position:relative;border-left:0!important;overflow:hidden;background-repeat:no-repeat;padding-left:16px}
 .location-item.shared-location-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(to bottom,var(--shared-a) 0 50%,var(--shared-b) 50% 100%)}
+.location-manager-person{margin-top:8px;padding:7px 9px;border-radius:8px;background:#f6f8fa;font-size:11px;color:#4c5964}
+.location-manager-person b{color:var(--ink)}
 .calendar-event-details{margin-top:18px}
 .event-help{margin:4px 0 12px;color:var(--muted);font-size:12px;line-height:1.4}
 .event-list{display:grid;gap:8px;margin-top:12px;max-height:360px;overflow:auto;padding-right:3px}
@@ -79,7 +81,7 @@
         </div>
         <div class="location-filters">
           <select id="locationCompanyFilter" aria-label="Filtrar locaciones por empresa"><option value="">Todas las empresas</option></select>
-          <input id="locationSearch" type="search" placeholder="Buscar locación...">
+          <input id="locationSearch" type="search" placeholder="Buscar locación o gerente...">
         </div>
       </div>
       <div id="locationList" class="location-list"></div>
@@ -91,6 +93,7 @@
         <input type="hidden" id="locationEditId">
         <div class="field"><label>Empresa</label><select id="locationCompany" required></select></div>
         <div class="field"><label>Locación</label><input id="locationName" placeholder="Ej. Almacén Cozumel" required></div>
+        <div class="field"><label>Nombre del gerente de locación</label><input id="locationManagerName" placeholder="Ej. Ana López"></div>
         <div class="field"><label>Fecha de última auditoría</label><input id="lastAuditDate" type="date"></div>
         <div class="field"><label>Nota rápida</label><textarea id="locationNote" class="compact-textarea" placeholder="Pendientes, área crítica, contacto..."></textarea></div>
         <div class="btns"><button class="btn primary" type="submit" id="saveLocationBtn">Guardar locación</button><button class="btn soft" type="button" id="cancelLocationBtn" hidden>Cancelar</button></div>
@@ -190,12 +193,13 @@
   </div>
   <div class="spacer"></div>
   <div class="card pad"><h2>Línea de tiempo</h2><div id="timeline" class="timeline"></div></div>
-  <div class="foot">Los datos se guardan automáticamente en este navegador. <span class="version-mark">Versión 12</span></div>
+  <div class="foot">Los datos se guardan automáticamente en este navegador. <span class="version-mark">Versión 13</span></div>
 </section>
 </div>
 </main>
-<script src="app.js?v=8"></script>
-<script src="events.js?v=1"></script>
+<script src="app.js?v=9"></script>
+<script src="events.js?v=2"></script>
+<script src="location-manager.js?v=1"></script>
 <script>
 (() => {
   const stateKey = 'auditLocationEditorHiddenV1';
@@ -245,7 +249,7 @@
     const selectedCompany = companyFilter.value;
     const matches = locationNotes.filter(l => {
       const matchesCompany = !selectedCompany || l.companyId === selectedCompany;
-      const matchesSearch = `${l.name} ${l.note||''} ${company(l.companyId).name}`.toLowerCase().includes(q);
+      const matchesSearch = `${l.name} ${l.managerName||''} ${l.note||''} ${company(l.companyId).name}`.toLowerCase().includes(q);
       return matchesCompany && matchesSearch;
     });
     $('locationCount').textContent = locationNotes.length;
@@ -268,6 +272,7 @@
           : `border-left-color:${c.color}`;
         return `<article class="location-item ${c.shared?'shared-location-card':''}" style="${cardStyle}">
           <div class="location-top"><div><h3 class="location-title">${esc(l.name)}</h3><div class="location-company">${companyMarker(c)}${esc(c.name)}</div></div><span class="age-chip ${age.cls}">${age.label}</span></div>
+          ${l.managerName?`<div class="location-manager-person"><b>Gerente:</b> ${esc(l.managerName)}</div>`:'<div class="location-manager-person"><b>Gerente:</b> Sin registrar</div>'}
           <div class="location-date"><span>Fecha exacta</span><b>${l.lastAuditDate?formatDate(l.lastAuditDate,false):'Sin fecha'}</b></div>
           ${l.note?`<div class="location-note">${esc(l.note)}</div>`:''}
           <div class="location-actions"><button class="btn good" data-loc-action="schedule" data-id="${l.id}">Programar</button><button class="btn soft" data-loc-action="edit" data-id="${l.id}">Editar</button><button class="btn bad" data-loc-action="remove" data-id="${l.id}">Eliminar</button></div>
