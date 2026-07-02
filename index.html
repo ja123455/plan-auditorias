@@ -3,18 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Plan de Auditorías</title>
-<link rel="stylesheet" href="styles.css?v=7">
+<link rel="stylesheet" href="styles.css?v=9">
 <style>
 .location-date span{font-size:0}
 .location-date span::after{content:"Fecha exacta";font-size:11px;color:var(--muted);font-weight:800}
-.settings-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
-.settings-title-row h3{margin:0}
-.settings-toggle{padding:6px 9px;font-size:11px}
-.company-settings.is-hidden{border-top:0;margin-top:8px;padding:0}
-.company-settings.is-hidden #companySettingsBody,.company-settings.is-hidden .settings-title-row h3{display:none}
-.company-settings.is-hidden .settings-title-row{margin:0}
-.company-settings.is-hidden .settings-toggle{width:100%;padding:8px 10px}
+.company-details{margin-top:17px;padding-top:0;border-top:1px solid var(--line)}
+.company-details summary{list-style:none;cursor:pointer;padding:12px 0 0;font-size:12px;font-weight:900;color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.company-details summary::-webkit-details-marker{display:none}
+.company-details summary::after{content:"Mostrar";padding:6px 9px;border-radius:9px;background:#edf2f6;color:var(--ink);font-size:11px}
+.company-details[open] summary::after{content:"Ocultar"}
+.company-details-body{padding-top:10px}
+.version-mark{font-weight:800;color:#7b8792}
 </style>
 </head>
 <body>
@@ -95,17 +98,16 @@
     <div class="field"><label>Observaciones</label><textarea id="notes" placeholder="Detalles, alcance, documentos, pendientes..."></textarea></div>
     <div class="btns"><button class="btn primary" type="submit" id="saveBtn">Guardar visita</button><button class="btn soft" type="button" id="cancelBtn" hidden>Cancelar</button></div>
   </form>
-  <div class="settings company-settings" id="companySettings">
-    <div class="settings-title-row">
-      <h3>Empresas y colores</h3>
-      <button class="btn soft settings-toggle" type="button" id="toggleCompanySettings">Ocultar empresas</button>
-    </div>
-    <div id="companySettingsBody">
+
+  <details class="company-details" id="companySettings">
+    <summary>Empresas y colores</summary>
+    <div class="company-details-body">
       <div class="company-row"><input id="c1name" value="Empresa 1"><input id="c1color" type="color" value="#1d557e"></div>
       <div class="company-row"><input id="c2name" value="Empresa 2"><input id="c2color" type="color" value="#6a45b8"></div>
       <button class="btn soft" style="width:100%" id="saveCompanies">Guardar empresas</button>
     </div>
-  </div>
+  </details>
+
   <div class="settings"><h3>Respaldo</h3><div class="btns"><button class="btn good" id="exportBtn">Exportar</button><button class="btn soft" id="importBtn">Importar</button><input id="file" type="file" accept=".json" hidden></div></div>
 </aside>
 
@@ -134,11 +136,11 @@
   </div>
   <div class="spacer"></div>
   <div class="card pad"><h2>Línea de tiempo</h2><div id="timeline" class="timeline"></div></div>
-  <div class="foot">Los datos se guardan automáticamente en este navegador.</div>
+  <div class="foot">Los datos se guardan automáticamente en este navegador. <span class="version-mark">Versión 9</span></div>
 </section>
 </div>
 </main>
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6"></script>
 <script>
 (() => {
   const stateKey = 'auditLocationEditorHiddenV1';
@@ -164,25 +166,6 @@
     localStorage.setItem(stateKey, '0');
     apply();
   }, true);
-  apply();
-})();
-
-(() => {
-  const stateKey = 'auditCompanySettingsHiddenV1';
-  const section = document.getElementById('companySettings');
-  const button = document.getElementById('toggleCompanySettings');
-  if (!section || !button) return;
-  let hidden = localStorage.getItem(stateKey) === '1';
-  const apply = () => {
-    section.classList.toggle('is-hidden', hidden);
-    button.textContent = hidden ? 'Editar empresas' : 'Ocultar empresas';
-    button.setAttribute('aria-expanded', String(!hidden));
-  };
-  button.addEventListener('click', () => {
-    hidden = !hidden;
-    localStorage.setItem(stateKey, hidden ? '1' : '0');
-    apply();
-  });
   apply();
 })();
 </script>
