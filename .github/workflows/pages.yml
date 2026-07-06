@@ -28,6 +28,7 @@ jobs:
         run: |
           mkdir -p _site
           cp index.html styles.css app.js events.js location-manager.js logo-wildtours.svg logo-aviomar.svg .nojekyll _site/
+          sed -i 's/location-manager\.js?v=2/location-manager.js?v=15/g; s/Versión 14/Versión 15/g' _site/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
