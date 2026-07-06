@@ -27,9 +27,9 @@ jobs:
       - name: Prepare static site
         run: |
           mkdir -p _site
-          cp index.html styles.css app.js events.js location-manager.js branding-v16.js logo-wildtours.svg logo-aviomar.svg .nojekyll _site/
-          sed -i 's/location-manager\.js?v=2/location-manager.js?v=16/g; s/Versión 14/Versión 16/g; s/Versión 15/Versión 16/g' _site/index.html
-          sed -i 's#</body>#<script src="branding-v16.js?v=16"></script></body>#' _site/index.html
+          cp index.html styles.css app.js events.js location-manager.js branding-v17.js logo-wildtours.svg logo-aviomar.svg .nojekyll _site/
+          sed -i 's/location-manager\.js?v=2/location-manager.js?v=17/g; s/Versión 14/Versión 17/g; s/Versión 15/Versión 17/g; s/Versión 16/Versión 17/g' _site/index.html
+          sed -i 's#</body>#<script src="branding-v17.js?v=17"></script></body>#' _site/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
