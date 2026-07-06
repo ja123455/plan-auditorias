@@ -136,4 +136,7 @@
 
   titleBlock.replaceWith(wrapper);
   wrapper.append(logos, copy);
+
+  const versionMark = document.querySelector('.version-mark');
+  if (versionMark) versionMark.textContent = 'Versión 15';
 })();
