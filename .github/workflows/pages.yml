@@ -28,6 +28,7 @@ jobs:
         run: |
           mkdir -p _site
           cp index.html styles.css app.js events.js location-manager.js branding-v18.js visit-location-v19.js logo-wildtours.svg logo-aviomar.svg .nojekyll _site/
+          cp -R mantenimiento _site/
           sed -i 's/location-manager\.js?v=2/location-manager.js?v=19/g; s/Versión 14/Versión 19/g; s/Versión 15/Versión 19/g; s/Versión 16/Versión 19/g; s/Versión 17/Versión 19/g; s/Versión 18/Versión 19/g' _site/index.html
           sed -i 's#</body>#<script src="branding-v18.js?v=18"></script><script src="visit-location-v19.js?v=19"></script></body>#' _site/index.html
 
